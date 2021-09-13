@@ -1,11 +1,15 @@
 package web.dao;
 
 import org.springframework.stereotype.Repository;
+import web.models.Role;
 import web.models.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -15,34 +19,92 @@ public class UserDaoImpl implements UserDao {
 
 
     @Override
-    public void addUser(User user) {
-        entityManager.persist(user);
-
+    public Role getRoleByName(String name) {
+        try {   // пробуем достать роль
+            entityManager
+                    .createQuery("select r from Role r where r.role = :name", Role.class)
+                    .setParameter("name", name)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            // если такой роли не существует в БД, то добавляем её
+            Role r = new Role();
+            r.setRole(name);
+            entityManager.persist(r);
+        }
+        // заново достаём роль из БД
+        return entityManager
+                .createQuery("select r from Role r where r.role = :name", Role.class)
+                .setParameter("name", name)
+                .getSingleResult();
     }
 
     @Override
-    public void updateUser(User user) {
-        entityManager.merge(user);
-    }
+    public Set<Role> getRolesFromText(String text) {
+        Set<Role> roles = new HashSet<>();
 
-    @Override
-    public void removeUserById(long id) {
-        entityManager.remove(entityManager.find(User.class, id));
+        text = text.toLowerCase();
 
-    }
+        if (text.contains("admin")) {
+            Role role = getRoleByName("ROLE_ADMIN");
+            roles.add(role);
+        }
+        if (text.contains("user")) {
+            Role role = getRoleByName("ROLE_USER");
+            roles.add(role);
+        }
 
-    @Override
-    public User getUserById(long id) {
-        return entityManager.find(User.class, id);
+        return roles;
     }
 
     @Override
     public List<User> getAllUsers() {
-        return entityManager.createQuery("from User").getResultList();
+        return entityManager.createQuery("select u from User u", User.class).getResultList();
     }
 
     @Override
-    public User getUserByName(String username) {
-        return null;
+    public User getUser(long id) {
+        return entityManager.find(User.class, id);
     }
+
+    @Override
+    public User getUserByLogin(String login) {
+        return entityManager.createQuery("select u from User u where u.login = :login", User.class)
+                .setParameter("login", login).getSingleResult();
+    }
+
+    @Override
+    public void addUser(User user) {
+        entityManager.persist(user);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        entityManager.createQuery("delete from User u where u.id = :id")
+                .setParameter("id", id).executeUpdate();
+    }
+
+    @Override
+    public void updateUser(long id, String log, String pas, String rol, String fn, String ln, String c) {
+        User u = entityManager.getReference(User.class, id);
+
+        if (log.length() > 0) {
+            u.setLogin(log);
+        }
+        if (pas.length() > 0) {
+            u.setPassword(pas);
+        }
+        if (rol.length() > 0) {
+            u.setRoles(getRolesFromText(rol));
+        }
+        if (fn.length() > 0) {
+            u.setName(fn);
+        }
+        if (ln.length() > 0) {
+            u.setLastName(ln);
+        }
+        if (c.length() > 0) {
+            u.setPhoneNumber(c);
+        }
+    }
+
 }

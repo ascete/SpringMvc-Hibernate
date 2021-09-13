@@ -1,6 +1,8 @@
 package web.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -9,71 +11,117 @@ import org.springframework.web.servlet.ModelAndView;
 import web.models.User;
 import web.service.UserService;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@RequestMapping("/")
+@Controller
 public class UserController {
 
-    @RequestMapping(value = "hello", method = RequestMethod.GET)
-    public String printWelcome(ModelMap model) {
-        List<String> messages = new ArrayList<>();
-        messages.add("Hello!");
-        messages.add("I'm Spring MVC-SECURITY application");
-        messages.add("5.2.0 version by sep'19 ");
-        model.addAttribute("messages", messages);
-        return "hello";
+    private UserService service;
+    public UserController(UserService service) {
+        this.service = service;
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.GET)
-    public String loginPage() {
+
+
+
+
+    @GetMapping
+    public String index(Principal principal) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+        return String.format("redirect:/profile/%s", principal.getName());
+    }
+
+
+
+
+    @GetMapping("/login")
+    public String login() {
         return "login";
     }
 
 
-    private UserService userService;
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+
+    @GetMapping("/profile/{login}")
+    public String user(@PathVariable("login") String log, Model model) {
+        String logAuth = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (   log.equals( logAuth )   ) {
+            model.addAttribute("user", service.getUserByLogin(log));
+            model.addAttribute("userAuth", service.getUserByLogin(logAuth));
+            return "user";
+        } else if (   service.getUserByLogin(logAuth).isAdmin()   ) {
+            model.addAttribute("user", service.getUserByLogin(log));
+            model.addAttribute("userAuth", service.getUserByLogin(logAuth));
+            return "user";
+        }
+
+        return String.format("redirect:/profile/%s", logAuth);
     }
 
-    @GetMapping(value = "/users")
-    public String listUsers(Model model) {
-        model.addAttribute("allUsers", userService.getAllUsers());
-        return "users";
+
+
+
+    @GetMapping("/admin")
+    public String admin(Model model) {
+        model.addAttribute("all_users", service.getAllUsers());
+        return "admin";
     }
 
-    @GetMapping(value = "/users/new")
-    public String newUser() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("user", new User());
-        return "new";
+
+
+
+    @GetMapping("/admin/create")
+    public String create(Model model) {
+        model.addAttribute("new_user", new User());
+        return "create";
     }
 
-    @PostMapping(value = "/add")
-    public String addUser(@ModelAttribute User user) {
-        userService.addUser(user);
-        return "redirect:/users";
+    @PostMapping("/admin/create")
+    public String create(@ModelAttribute("new_user") User u, @RequestParam("new_user_roles") String rol) {
+        u.setRoles(service.getRolesFromText(rol));
+        service.addUser(u);
+        return "redirect:/admin";
     }
 
-    //страница для редактирования юзеров
-    @GetMapping(value = "/edit/{id}")
-    public String editUserForm(@PathVariable("id") long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "edit";
+
+
+
+    @GetMapping("/admin/update")
+    public String update() {
+        return "update";
     }
 
-    @PostMapping(value = "/edit")
-    public String editUser(@ModelAttribute User user) {
-        userService.updateUser(user);
-        return "redirect:/users";
+    @PatchMapping("/admin/update")
+    public String update(@RequestParam("update_id") long id,
+                         @RequestParam("update_log") String log,
+                         @RequestParam("update_pas") String pas,
+                         @RequestParam("update_rol") String rol,
+                         @RequestParam("update_fn") String fn,
+                         @RequestParam("update_sn") String sn,
+                         @RequestParam("update_c") String c)
+    {
+        service.updateUser(id, log, pas, rol, fn, sn, c);
+        return "redirect:/admin";
     }
 
-    @PostMapping(value = "/remove/{id}")
-    public String removeUser(@PathVariable("id") long id) {
-        userService.removeUserById(id);
-        return "redirect:/users";
+
+
+
+    @GetMapping("/admin/delete")
+    public String delete() {
+        return "delete";
     }
+
+    @DeleteMapping("/admin/delete")
+    public String delete(@RequestParam("delete_id") Long id) {
+        service.deleteUser(id);
+        return "redirect:/admin";
+    }
+
 }

@@ -8,13 +8,16 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "my_users")
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    @Column(unique = true)
+    private String login;
 
     @Column(name = "name")
     String name;
@@ -87,6 +90,14 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public String getLogin() {
+        return login;
+    }
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+
     @Override
     public String toString() {
         return "User{" +
@@ -106,10 +117,17 @@ public class User implements UserDetails {
     private Set<Role> getRoles() {
         return roles;
     }
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 
     @Override
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -136,4 +154,10 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public boolean isAdmin() {
+        return this.getRoles().contains("ROLE_ADMIN");
+    }
+
+
 }

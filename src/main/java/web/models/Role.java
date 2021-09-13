@@ -14,15 +14,15 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "role")
-    private String name;
+    @Column(unique = true)
+    private String role;
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
     public Role(Long id, String name) {
         this.id = id;
-        this.name = name;
+        this.role = name;
     }
 
     public Role() {
@@ -36,12 +36,20 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public String getName() {
-        return name;
+        return role;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.role = name;
     }
 
     public Set<User> getUsers() {
