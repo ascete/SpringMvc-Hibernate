@@ -43,11 +43,15 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String lastName, String phoneNumber, String email) {
+    public User(Long id, String name, String lastName, String phoneNumber, String email, String password,
+                Set<Role> roles) {
+        this.id = id;
         this.name = name;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.password = password;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -93,6 +97,7 @@ public class User implements UserDetails {
     public String getLogin() {
         return login;
     }
+
     public void setLogin(String login) {
         this.login = login;
     }
@@ -117,6 +122,7 @@ public class User implements UserDetails {
     private Set<Role> getRoles() {
         return roles;
     }
+
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }

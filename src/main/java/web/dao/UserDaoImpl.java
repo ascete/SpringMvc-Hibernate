@@ -106,5 +106,4 @@ public class UserDaoImpl implements UserDao {
             u.setPhoneNumber(c);
         }
     }
-
 }
