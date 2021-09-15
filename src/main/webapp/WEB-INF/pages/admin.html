@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Admin Page</title>
@@ -42,56 +45,36 @@
     </style>
 </head>
 <body>
-
-<form action="/logout" method="POST">
-    <button>logout</button>
-</form>
-
-<center>
-
-    <h4>Все пользователи</h4>
-    <table border="1" bordercolor="#808080" cellspacing="0" cellpadding="5">
+<!--    tg стиль который указан выше-->
+<div th:align="center" class="tg">
+    <h1>This Is Admin Page</h1>
+    <br/>
+    <br/>
+    <h2>PHONE BOOK</h2>
+    <h3><a href="/admin/new.html">Add new User</a></h3>
+    <table border="1" cellpadding="5">
         <tr>
             <th>ID</th>
-            <th>Login</th>
-            <th>Password</th>
-            <th>Roles</th>
-            <th>FirstName</th>
-            <th>SecondName</th>
-            <th>Cellphone</th>
+            <th>NAME</th>
+            <th>LAST_NAME</th>
+            <th>PHONE_NUMBER</th>
+            <th>EMAIL</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
-        <tr th:each="user : ${all_users}">
-            <td th:text="${user.getId()}">id</td>
-            <td>
-                <a th:href="@{      /profile/{login}
-                                    (  login = ${ user.getLogin() }  )
-                              }"
-                   th:text="${user.getLogin()}">login</a>
-            </td>
-            <td th:text="${user.getPassword()}">password</td>
-            <td th:text="${user.getRoles()}">roles</td>
-            <td th:text="${user.getFirstName()}">first name</td>
-            <td th:text="${user.getSecondName()}">second name</td>
-            <td th:text="${user.getCellphone()}">cellphone</td>
+        <tr th:each="user : ${allUsers}">
+            <td th:text="${user.id}">ID</td>
+            <td th:text="${user.username}">NAME</td>
+            <td th:text="${user.lastName}">LAST_NAME</td>
+            <td th:text="${user.phoneNumber}">PHONE_NUMBER</td>
+            <td th:text="${user.email}">EMAIL</td>
+            <td><a th:href="@{/edit/{id}(id=${user.id})}">Edit</a></td>
+            <td><a th:href="@{/remove/{id}(id=${user.id})}">Delete</a></td>
         </tr>
     </table>
-
-    <br>
-    <br>
-    <form action="/admin/create">
-        <button>Создать пользователя</button>
-    </form>
-
-    <br>
-    <form action="/admin/update">
-        <button>Редактировать пользователя</button>
-    </form>
-
-    <br>
-    <form action="/admin/delete">
-        <button>Удалить пользователя</button>
-    </form>
-
-</center>
+    <br/>
+    <br/>
+    <a th:href="@{/logout}">LOGOUT</a>
+</div>
 </body>
 </html>

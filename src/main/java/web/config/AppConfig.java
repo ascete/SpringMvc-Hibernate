@@ -12,9 +12,16 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import web.dao.RoleDao;
+import web.dao.UserDao;
+import web.models.Role;
+import web.models.User;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 @Configuration
 @EnableTransactionManagement
@@ -24,10 +31,13 @@ public class AppConfig {
 
     private Environment environment;
 
+
     @Autowired
     public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
+
+
 
     @Bean
     public DataSource getDataSource() {

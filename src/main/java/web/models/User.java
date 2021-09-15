@@ -14,39 +14,36 @@ public class User implements UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @Column(unique = true)
-    private String login;
-
-    @Column(name = "name")
-    String name;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "lastName")
-    String lastName;
+    private String lastName;
 
     @Column(name = "phoneNumber")
-    String phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "email")
-    String email;
+    private String email;
 
     @Column
     private String password;
 
+    //список ролей загружается вместе с пользователем сразу (не ждет пока к нему обратятся).
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;
 
-
     public User() {
     }
 
-    public User(Long id, String name, String lastName, String phoneNumber, String email, String password,
+    public User(Long id, String username, String lastName, String phoneNumber, String email, String password,
                 Set<Role> roles) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -62,12 +59,8 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getLastName() {
@@ -94,32 +87,11 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public String getLogin() {
-        return login;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
-    }
-
-    private Set<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
@@ -128,17 +100,18 @@ public class User implements UserDetails {
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
+    }
+
+    @Override
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override
@@ -161,9 +134,16 @@ public class User implements UserDetails {
         return true;
     }
 
-    public boolean isAdmin() {
-        return this.getRoles().contains("ROLE_ADMIN");
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
     }
-
-
 }
