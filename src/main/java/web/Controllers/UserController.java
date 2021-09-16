@@ -2,21 +2,15 @@ package web.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import web.models.Role;
 import web.models.User;
 import web.service.RoleService;
 import web.service.UserService;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -60,11 +54,9 @@ public class UserController {
         }
         user.setRoles(roleSet);
         userService.addUser(user);
-//        Set<Role> roleSet = Stream.of(checkBoxRoles).forEach();
-//        user.setRoles(roleSet);
-//        userService.addUser(user);
 
-        return "redirect:/admin";
+
+        return "adminpage";
     }
 
     //страница для редактирования юзеров
@@ -83,12 +75,12 @@ public class UserController {
         }
         user.setRoles(roleSet);
         userService.updateUser(user);
-        return "redirect:/admin";
+        return "adminpage";
     }
 
     @GetMapping(value = "/remove/{id}")
     public String removeUser(@PathVariable("id") long id) {
         userService.removeUserById(id);
-        return "redirect:/admin";
+        return "adminpage";
     }
 }

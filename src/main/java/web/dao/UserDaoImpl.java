@@ -15,8 +15,7 @@ import java.util.Set;
 
 @Repository
 public class UserDaoImpl implements UserDao {
-    private UserDao userDao;
-    private RoleDao roleDao;
+
 
 
 
@@ -26,7 +25,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override // добавить
     public void addUser(User user) {
-        entityManager.persist(user);
+        User manager = entityManager.merge(user);
+        entityManager.persist(manager);
     }
 
     @Override //обновить

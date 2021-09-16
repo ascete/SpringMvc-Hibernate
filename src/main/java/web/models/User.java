@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User implements UserDetails {
 
     @Id
@@ -40,8 +40,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String username, String lastName, String phoneNumber, String email, String password,
-                Set<Role> roles) {
+    public User( String username, String lastName, String phoneNumber, String email, String password, Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.lastName = lastName;
