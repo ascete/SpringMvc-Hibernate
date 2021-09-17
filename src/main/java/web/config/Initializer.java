@@ -34,14 +34,14 @@ public class Initializer {
 
         Set<Role> roles_admin = new HashSet<>();
         roles_admin.add(role1);
-        User admin = new User("admin", "Admin", "1333",
+        User admin = new User(0L, "admin", "Admin", "1333",
                 "admin@yan.ru", "1", roles_admin);
-        //admin.setRoles(roles_admin);
+        admin.setRoles(roles_admin);
         userService.addUser(admin);
 
         Set<Role> roles_user = new HashSet<>();
         roles_user.add(role2);
-        User user = new User("user", "user", "1444",
+        User user = new User( 1L,"user", "user", "1444",
                 "user@yan.ru", "1", roles_user);
         //user.setRoles(roles_user);
         userService.addUser(user);
