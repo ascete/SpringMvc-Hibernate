@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
@@ -37,10 +37,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;
 
-    public User(long l, String admin, String s, String s1, String s2, String s3, Set<Role> roles_admin) {
-    }
 
-    public User( String username, String lastName, String phoneNumber, String email, String password, Set<Role> roles) {
+
+    public User( Long id, String username, String lastName, String phoneNumber, String email, String password, Set<Role> roles) {
         this.id = id;
         this.username = username;
         this.lastName = lastName;

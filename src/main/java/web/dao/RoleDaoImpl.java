@@ -17,8 +17,12 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public void addRole(Role role) {
-        Role manager = entityManager.merge(role);
-        entityManager.persist(role);
+        String str = role.getName();
+        if(!(getAllRoles().contains(str))){
+            Role manager = entityManager.merge(role);
+            entityManager.persist(manager);
+        }
+
     }
 
     @Override

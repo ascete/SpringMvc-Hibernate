@@ -56,7 +56,7 @@ public class UserController {
         userService.addUser(user);
 
 
-        return "adminpage";
+        return "redirect:/admin";
     }
 
     //страница для редактирования юзеров
@@ -75,12 +75,12 @@ public class UserController {
         }
         user.setRoles(roleSet);
         userService.updateUser(user);
-        return "adminpage";
+        return "redirect:/admin";
     }
 
     @GetMapping(value = "/remove/{id}")
     public String removeUser(@PathVariable("id") long id) {
         userService.removeUserById(id);
-        return "adminpage";
+        return "redirect:/admin";
     }
 }
