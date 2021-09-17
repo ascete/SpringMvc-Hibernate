@@ -58,7 +58,7 @@ public class AppConfig {
 
         Properties props = new Properties();
         props.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
-        props.put("hibernate.hbm2ddl.auto=create", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
+        props.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("hibernate.hbm2ddl.auto"));
         props.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
 
         entityManager.setJpaProperties(props);

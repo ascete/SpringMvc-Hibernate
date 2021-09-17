@@ -5,6 +5,7 @@ import web.models.Role;
 import web.models.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -17,12 +18,7 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public void addRole(Role role) {
-        String str = role.getName();
-        if(!(getAllRoles().contains(str))){
-            Role manager = entityManager.merge(role);
-            entityManager.persist(manager);
-        }
-
+        entityManager.persist(role);
     }
 
     @Override
@@ -42,8 +38,7 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public Role getRoleByName(String name) {
-        TypedQuery<Role> queryRole = entityManager.createQuery("select r from Role r where r.name=:role",
-                Role.class).setParameter("role", name);
-        return queryRole.getSingleResult();
+       return entityManager.createQuery("select r from Role r where r.name=:role",
+                Role.class).setParameter("role", name).getSingleResult();
     }
 }
